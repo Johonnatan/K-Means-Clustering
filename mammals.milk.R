@@ -1,34 +1,40 @@
-rm(list=ls(all=TRUE)) #Remove objetos da memória do R
+#Remove objetos da memória do R
+rm(list=ls(all=TRUE))
 
 #Instala bibliotecas necessarias
-install.packages('cluster.datasets') #Biblioteca para chamar o conjunto de dados
+install.packages('cluster.datasets') #Biblioteca para chamar o conjunto de dataframe
 
 #Carrega bibliotecas
 library(cluster.datasets)
 
-#Carrega o conjunto de dados leite de mamiferos
-dados <-all.mammals.milk.1956
+#Carrega o conjunto de dataframe
+data(all.mammals.milk.1956)
+dataframe <-all.mammals.milk.1956
 
-summary(dados) #Visualiza resumo descritivo das variaveis
+#Visualiza sumario dos dados
+summary(dataframe) 
 
-rownames(dados) <- dados$name #Adiciona o nome de cada animal ao nome da linha
+#Adiciona o nome de cada animal ao nome da linha
+rownames(dataframe) <- dataframe$name
 
-dados$name <- NULL #Exclui a coluna nome, pois nos algoritmos de clusters so entram variaveis numericas ou factor
+#Exclui a coluna nome
+dataframe$name <- NULL 
 
-set.seed(10)
+#Planta a semente
+set.seed(1)
+
 #Roda kmeans com sete clusters
-k_means <- kmeans(dados,7)
-k_means
+k_means <- kmeans(dataframe,7)
 
-#Observe o valor medio de cada variavel em cada cluster (centroids)
+#Observe os centroids
 k_means$centers
 k_means$cluster
 
-#Roda algoritmo das componentes principais para reduzir a dimensao do conjunto de dados
-pca <- princomp(dados,cor = T)
+#Roda algoritmo das componentes principais para reduzir a dimensao do conjunto de dataframe
+pca <- princomp(dataframe,cor = T)
 summary(pca)
 
-#Plota grafico de dispersao com a primeira componente principal no eixo y e segunda componente principal no eixo X e colore por cluster
+#Plota grafico de dispersao
 plot(y = pca$scores[,1],
      x = pca$scores[,2],
      xlab = 'Dimensao dois',
@@ -36,6 +42,10 @@ plot(y = pca$scores[,1],
      col = k_means$cluster,
      pch = 19,
      cex = 1, lty = "solid", lwd = 4)
+
+#Traca linha de grade
 grid()
+
+#Rotula os pontos
 text(pca$scores[,2], pca$scores[,1], labels= factor(all.mammals.milk.1956$name),
      cex= 0.7, pos=3)
